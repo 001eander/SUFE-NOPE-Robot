@@ -1,0 +1,35 @@
+#!/usr/bin/expect
+# 使用方法: client_robot_connect.expect ip1 ip2 ip3 ...
+
+# Server Host
+set serverHost "192.168.1.100"
+set timeout 2
+if {$argc < 1} {
+  puts "请输入待连接的ip - Usage: client_robot_connect.expect {IPs}"
+  exit 1
+}
+# 用户名
+set user "pi"
+# 登录密码
+set password "raspberry"
+ 
+foreach IP $argv {
+spawn ssh $user@$IP
+ 
+expect \
+  "(yes/no" {
+    send "yes\r"
+    expect "password:?" {
+      send "$password\r"
+    }
+  } "password:?" {
+    send "$password\r"
+}
+ 
+expect "\$?"
+# 替换你要执行的命令
+send "sudo nohup python3 -u /home/pi/hiwonder-toolbox/RobotClient.py $serverHost & \r"
+#expect "\$?"
+#send "exit\r"
+expect eof
+}

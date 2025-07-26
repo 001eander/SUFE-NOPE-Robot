@@ -1,0 +1,31 @@
+#!/usr/bin/expect
+
+# Server Host
+set defaultHost "192.168.149.1"
+
+
+set timeout 20
+
+set user "pi"
+set password "raspberry"
+
+#spawn scp -r /Users/hyacinth/Downloads/meetingProject $user@$defaultHost:/home/pi/Desktop/
+
+spawn ssh $user@$defaultHost
+expect \
+  "(yes/no)?" {
+    send "yes\r"
+    expect "password:?" {
+      send "$password\r"
+    }
+  } "password:?" {
+    send "$password\r"
+}
+
+expect "\$?"
+# 替换你要执行的命令
+send "sudo bash /home/pi/Desktop/meetingProject/setFolder.sh \r" 
+expect "\$?"
+send "sudo reboot\r"
+expect eof
+
